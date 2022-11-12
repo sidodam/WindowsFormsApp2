@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,10 @@ namespace WindowsFormsApp2
     public partial class Form1 : Form
     {
 
-        private ErrorProvider dniErrorProvider;
-        private ErrorProvider nombreErrorProvider;
-        private ErrorProvider emailErrorProvider;
+
+        //private ErrorProvider dniErrorProvider;
+        //private ErrorProvider nombreErrorProvider;
+        //private ErrorProvider emailErrorProvider;
         private string imageName;
         private List<Estudiante> estudianteList = new List<Estudiante>();
 
@@ -28,16 +30,39 @@ namespace WindowsFormsApp2
             InitializeComponent();
 
 
-            dniErrorProvider = new ErrorProvider();
-            nombreErrorProvider = new ErrorProvider();
-            emailErrorProvider = new ErrorProvider();
-            dniErrorProvider.SetIconAlignment(this.textBox1, ErrorIconAlignment.TopRight);
-            nombreErrorProvider.SetIconAlignment(this.textBox3, ErrorIconAlignment.TopRight);
-            nombreErrorProvider.SetIconAlignment(this.textBox4, ErrorIconAlignment.TopRight);
-            emailErrorProvider.SetIconAlignment(this.textBox2, ErrorIconAlignment.TopRight);
+            //dniErrorProvider = new ErrorProvider();
+            //nombreErrorProvider = new ErrorProvider();
+            //emailErrorProvider = new ErrorProvider();
+            //dniErrorProvider.SetIconAlignment(this.textBox1, ErrorIconAlignment.TopRight);
+            //nombreErrorProvider.SetIconAlignment(this.textBox3, ErrorIconAlignment.TopRight);
+            //nombreErrorProvider.SetIconAlignment(this.textBox4, ErrorIconAlignment.TopRight);
+            //emailErrorProvider.SetIconAlignment(this.textBox2, ErrorIconAlignment.TopRight);
 
 
+            string conncectionString;
+            SqlConnection cnn;
 
+            conncectionString = @"Data Source=DESKTOP-FSTJBGL;Initial Catalog=estudiosDB; Integrated Security=True;";
+
+
+            cnn = new SqlConnection(conncectionString);
+            cnn.Open();
+
+
+            SqlCommand sqlQuery = new SqlCommand("select nombre from ciclo", cnn);
+
+            SqlDataReader datareader;
+            string sql;
+
+
+            datareader = sqlQuery.ExecuteReader();
+
+            while (datareader.Read())
+            {
+
+                comboBox1.Items.Add(datareader.GetString(0));
+            }
+            cnn.Close();
 
 
         }
@@ -50,6 +75,7 @@ namespace WindowsFormsApp2
             label3.ForeColor = Color.Black;
             label4.ForeColor = Color.Black;
 
+           
 
         }
 
@@ -86,21 +112,9 @@ namespace WindowsFormsApp2
         private void iconButton3_Click(object sender, EventArgs e)
         {
 
+
+
            
-
-
-            OpenFileDialog opnfd = new OpenFileDialog();
-            opnfd.Filter = "Image Files (*.jpg;*.jpeg;.*.gif;)|*.jpg;*.jpeg;.*.gif";
-            if (opnfd.ShowDialog() == DialogResult.OK)
-            {
-                pictureBox1.Image = new Bitmap(opnfd.FileName);
-                imageName = opnfd.FileName;
-
-                estudianteList.Add(new Estudiante(textBox1.Text, textBox3.Text, textBox4.Text, textBox2.Text, opnfd.FileName));
-
-
-            }
-
 
 
         }
@@ -156,105 +170,27 @@ namespace WindowsFormsApp2
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void Dni_Validating(object sender, CancelEventArgs e)
-        {
-            var patron = @"[1-9]{8}[A-Z]{1}";
-
-            Regex rgx = new Regex(patron);
-
-            if (!rgx.IsMatch(textBox1.Text))
+            OpenFileDialog opnfd = new OpenFileDialog();
+            opnfd.Filter = "Image Files (*.jpg;*.jpeg;.*.gif;)|*.jpg;*.jpeg;.*.gif";
+            if (opnfd.ShowDialog() == DialogResult.OK)
             {
-
-                this.dniErrorProvider.SetError(textBox1, "nif no es correctro");
-               e.Cancel = true;
-
-            }
-
-            else
-            {
-                this.dniErrorProvider.SetError(textBox1, null);
-
-            }
-        }
-
-        private void nombre_Validating(object sender, CancelEventArgs e)
-        {
-            var patron = @"^[a-z ,.'-]+$";
-            Regex rgx = new Regex(patron);
-
-            if (!rgx.IsMatch(textBox3.Text))
-            {
-
-                this.nombreErrorProvider.SetError(textBox3, "nombre no es correctro");
-                e.Cancel = true;
-
-            }
-
-            else
-            {
-                this.nombreErrorProvider.SetError(textBox3, null);
-
-            }
+                pictureBox1.Image = new Bitmap(opnfd.FileName);
+                imageName = opnfd.FileName;
 
 
-        }
-
-        private void apellido_Validating(object sender, CancelEventArgs e)
-        {
-
-            var patron = @"^[a-z ,.'-]+$";
-            Regex rgx = new Regex(patron);
-
-            if (!rgx.IsMatch(textBox4.Text))
-            {
-
-                this.nombreErrorProvider.SetError(textBox4, "apellido no es correctro");
-                e.Cancel = true;
-
-            }
-            else
-            {
-                this.nombreErrorProvider.SetError(textBox4, null);
             }
 
         }
 
-        private void email_Validating(object sender, CancelEventArgs e)
-        {
+      
 
-            var patron = @"^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]$";
-            Regex rgx = new Regex(patron);
+      
 
-            if (!rgx.IsMatch(textBox2.Text))
-            {
-
-                this.nombreErrorProvider.SetError(textBox2, "email no es correctro");
-                e.Cancel = true;
-
-            }
-            else
-            {
-                this.nombreErrorProvider.SetError(textBox2, null);
-            }
-        }
+   
 
         private void iconButton2_Click_1(object sender, EventArgs e)
         {
 
-            if (this.ValidateChildren())
-            {
-                MessageBox.Show("Validation succeeded!");
-
-
-
-
-            }
-            else
-            {
-                MessageBox.Show("Validation failed.");
-            }
 
         }
 
@@ -276,6 +212,69 @@ namespace WindowsFormsApp2
 
             }
 
+
+        }
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click_2(object sender, EventArgs e)
+            {
+
+            var id = 0;
+       
+
+
+            string conncectionString;
+            SqlConnection cnn;
+
+            conncectionString = @"Data Source=DESKTOP-FSTJBGL;Initial Catalog=estudiosDB; Integrated Security=True;";
+
+
+
+            //INSERT INTO estudiante VALUES(1  , 'NIDO' , 'DIDO', 'RIDO' , 'SIDO@GAM.COM' )
+            String sqlQuery = $"INSERT INTO estudiante VALUES({id}  , '{textBox3.Text}' , '{textBox4.Text}', '{textBox6.Text}' , '{textBox2.Text}' )";
+            id++;
+
+
+            cnn = new SqlConnection(conncectionString);
+            cnn.Open();
+            SqlCommand cl = new SqlCommand(sqlQuery, cnn);
+
+            cl.ExecuteNonQuery();
+          
+            cnn.Close();
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+         
+            Form2 f2 = new Form2();
+            Close();
+            f2.Show();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
 
         }
     }
